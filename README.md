@@ -12,6 +12,7 @@ npm install --save bootstrap@3
 
 ### TODO
 
+* enum for strategy type
 * error handling
 * review constants 
 * clear player stats on new game
@@ -23,9 +24,3 @@ npm install --save bootstrap@3
 * revisit loop idioms etc with functional style
 * revisit RxJS
 * remote api strategy 
-
-* X canary tests
-* X audit round/game: closed system of points
-    X - user hand is not being handled properly 
-* X - config area
-    * X - add routing from course

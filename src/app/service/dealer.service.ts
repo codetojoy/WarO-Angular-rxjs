@@ -1,29 +1,28 @@
-import { Injectable, EventEmitter } from "@angular/core";
-
-import { ConfigService } from "./config.service";
-import { AuditService } from "./audit.service";
-
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 import { Deck } from "../model/deck.model";
 import { Card, Hand, Kitty } from "../model/hand.model";
-import { Table } from "../model/table.model";
 import { Bid, Player, Players } from "../model/player.model";
+import { Table } from "../model/table.model";
+import { AuditService } from "./audit.service";
+import { ConfigService } from "./config.service";
 
 @Injectable()
 export class DealerService {
   private table: Table;
-  tableChanged: EventEmitter<Table> = new EventEmitter<Table>();
-  statusChanged: EventEmitter<string> = new EventEmitter<string>();
+  tableChanged: Subject<Table> = new Subject<Table>();
+  statusChanged: Subject<string> = new Subject<string>();
 
   constructor(private auditService: AuditService, private configService: ConfigService) {
     this.configService.transparencyModeChanged.subscribe((value: boolean) => {
       this.table.setTransparencyMode(value);
-      this.tableChanged.emit(this.table);
+      this.tableChanged.next(this.table);
     });
   }
 
   emitTableChanged(): void {
     this.auditService.audit(this.table);
-    this.tableChanged.emit(this.table);
+    this.tableChanged.next(this.table);
   }
 
   newGame() {
@@ -81,11 +80,11 @@ export class DealerService {
 
     if (this.table.kitty.isEmpty()) {
       let gameWinner: Player = new Players().findGameWinner(this.table.players);
-      this.statusChanged.emit(`Game winner: ${gameWinner.name}`);
+      this.statusChanged.next(`Game winner: ${gameWinner.name}`);
       this.table.endGame();
     } else {
       this.table.assignPrizeCard();
-      this.statusChanged.emit(`Round winner: ${roundWinner.name}! (${this.table.prizeCard.value} points)`);
+      this.statusChanged.next(`Round winner: ${roundWinner.name}! (${this.table.prizeCard.value} points)`);
     }
 
     this.emitTableChanged();

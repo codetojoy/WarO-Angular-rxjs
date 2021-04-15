@@ -1,14 +1,14 @@
-import { EventEmitter, Injectable } from "@angular/core";
-
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 import { Player } from "../model/player.model";
 import { Strategy } from "../model/strategy.model";
-import { StrategyService } from "./strategy.service";
 import { Constants } from "../util/constants";
+import { StrategyService } from "./strategy.service";
 
 @Injectable()
 export class ConfigService {
   // events for DealerService because it isn't "need to know", whereas StrategyService is
-  transparencyModeChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
+  transparencyModeChanged: Subject<boolean> = new Subject<boolean>();
   private isTransparentMode: boolean = false;
   private numCards: number = 15;
   private maxCard: number = this.numCards;
@@ -26,7 +26,7 @@ export class ConfigService {
 
   toggleTransparency(): void {
     this.isTransparentMode = !this.isTransparentMode;
-    this.transparencyModeChanged.emit(this.isTransparentMode);
+    this.transparencyModeChanged.next(this.isTransparentMode);
   }
 
   getPlayers(): Player[] {
